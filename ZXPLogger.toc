@@ -1,0 +1,7 @@
+## Interface: 11404
+## Title: ZXPTracker
+## Notes: Tracks XP gained from kills
+## Author: Kevin Zarzana
+## Version: 1.0
+
+ZXPLogger.lua
