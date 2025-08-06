@@ -4,6 +4,22 @@ local maxXP = UnitXPMax("player")
 local xpChange = 0
 local lastXP = UnitXP("player")
 
+
+-- Create the main frame
+local xpFrame = CreateFrame("Frame", "ZXPLoggerFrame", UIParent)
+--xpFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 200)
+xpFrame:ClearAllPoints()
+xpFrame:SetPoint('TOP', 0, -50)
+xpFrame:SetFrameStrata('LOW')
+xpFrame:SetWidth(1)
+xpFrame:SetHeight(1)
+
+
+-- Create the text label
+local xpText = xpFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+xpText:SetPoint("CENTER", xpFrame, "CENTER", 0, 0)
+xpText:SetText("XP Gained: 0")
+
 -- Helpers 
 
 local function CheckXPChange()
@@ -11,7 +27,9 @@ local function CheckXPChange()
     if currentXP > lastXP then
         print("XP gained: " .. (currentXP - lastXP))
 		xpChange = currentXP - lastXP
-		print("Only " ..(maxXP - currentXP) / xpChange .. " Kills remaining")
+		local numKillsRemaining = math.floor((maxXP - currentXP) / xpChange) 
+		print("Only " .. numKillsRemaining.. " Kills remaining")
+		xpText:SetText("Only " .. numKillsRemaining.. " Kills remaining")
     end
     lastXP = currentXP
 end
@@ -19,14 +37,7 @@ end
 
 -- Event handler
 
-local DataFrame=CreateFrame("Frame","DataFrame",UIParent);--    Our frame
-DataFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-DataFrame:SetScript("OnEvent", 
-	function(self, event, ...)
-		currentXP = UnitXP("player")
-		maxXP = UnitXPMax("player")
-		print('|cffc41e3a ZXP |cffa050ff :: Configured')
-	end)
+
 	
 local ZXP_CalmFrame = CreateFrame("Frame")
 ZXP_CalmFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -49,6 +60,11 @@ ZXP_CombatFrame:SetScript("OnEvent",
 		
 	end)
 	
+
+--eventFrame:RegisterEvent("PLAYER_XP_UPDATE")
+
+
+
 -- EXPERIMENTAL TODO:
 	-- Make more accurate by capturing xp by kill instead of combat
 local eventFrame = CreateFrame("Frame")
@@ -59,5 +75,15 @@ eventFrame:SetScript("OnEvent", function(self, event, msg)
         if xpGained then
             xpText:SetText("XP Gained: " .. xpGained)
         end
-    end
+	end
 end)
+
+local DataFrame=CreateFrame("Frame","DataFrame",UIParent);--    Our frame
+DataFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+DataFrame:SetScript("OnEvent", 
+	function(self, event, ...)
+		currentXP = UnitXP("player")
+		maxXP = UnitXPMax("player")
+		print('|cffc41e3a ZXP |cffa050ff :: Configured')
+		xpFrame:Show()
+	end)
